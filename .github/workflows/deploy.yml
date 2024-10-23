@@ -30,11 +30,7 @@ jobs:
         $env:PATH = "$env:PATH;C:\Program Files\IIS\Microsoft Web Deploy V3\"
         msdeploy.exe -verb:sync `
         -source:content="publish_output" `
-        -dest:iisApp="Default%20Web%20Site/MyApp" `
-        -computerName="https://${{ secrets.IIS_SERVER }}:8172/msdeploy.axd" `
-        -username="${{ secrets.IIS_USERNAME }}" `
-        -password="${{ secrets.IIS_PASSWORD }}" `
-        -authType="Basic"
+        -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://${{ secrets.IIS_SERVER }}:8172/msdeploy.axd,UserName=${{ secrets.IIS_USERNAME }},Password=${{ secrets.IIS_PASSWORD }},AuthType=Basic"
       env:
         IIS_SERVER: ${{ secrets.IIS_SERVER }}
         IIS_USERNAME: ${{ secrets.IIS_USERNAME }}
