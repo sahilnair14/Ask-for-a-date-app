@@ -34,13 +34,6 @@ jobs:
         Write-Host "IIS_USERNAME: $env:IIS_USERNAME"
         Write-Host "IIS_PASSWORD: $env:IIS_PASSWORD"
 
-    - name: Set Debug Variables
-      run: |
-        $env:IIS_SERVER = "20.11.10.219"
-        $env:IIS_USERNAME = "sahil"
-        $env:IIS_PASSWORD = "Sahil1234567"
-
-
     - name: Deploy to IIS
       run: |
         $env:PATH = "$env:PATH;C:\Program Files\IIS\Microsoft Web Deploy V3\"
