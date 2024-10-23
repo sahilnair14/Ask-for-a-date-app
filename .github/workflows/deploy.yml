@@ -19,6 +19,7 @@ jobs:
         if (-Not (Test-Path $publishDir)) {
           New-Item -ItemType Directory -Path $publishDir
         }
+        # Copy files to the publish directory
         copy finally.html $publishDir
         copy style.css $publishDir
         copy yes.html $publishDir
@@ -30,7 +31,7 @@ jobs:
 
     - name: Debugging Environment Variables
       run: |
-        Write-Host "IIS_SERVER: 20.11.10.219"
+        Write-Host "IIS_SERVER: $env:IIS_SERVER"
         Write-Host "IIS_USERNAME: $env:IIS_USERNAME"
         Write-Host "IIS_PASSWORD: $env:IIS_PASSWORD"
 
@@ -40,9 +41,9 @@ jobs:
         $publishDir = "$(pwd)\publish_output"
         msdeploy.exe -verb:sync `
         -source:dirPath="$publishDir" `
-        -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://20.11.10.219:8172/msdeploy.axd,UserName=$env:IIS_USERNAME,Password=$env:IIS_PASSWORD,AuthType=Basic"
+        -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://$env:IIS_SERVER:8172/msdeploy.axd,UserName=$env:IIS_USERNAME,Password=$env:IIS_PASSWORD,AuthType=Basic,allowUntrusted=true"
       env:
-        IIS_SERVER: 20.11.10.219
+        IIS_SERVER: ${{ secrets.IIS_SERVER }}  # Use the secret for the server IP
         IIS_USERNAME: ${{ secrets.IIS_USERNAME }}
         IIS_PASSWORD: ${{ secrets.IIS_PASSWORD }}
 
