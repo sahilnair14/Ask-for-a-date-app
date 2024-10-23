@@ -28,7 +28,13 @@ jobs:
     - name: Deploy to IIS
       run: |
         $env:PATH = "$env:PATH;C:\Program Files\IIS\Microsoft Web Deploy V3\"
-        msdeploy -verb:sync -source:content='publish_output' -dest:iisApp='Default Web Site/MyApp',ComputerName='https://${{ secrets.IIS_SERVER }}:8172/msdeploy.axd',UserName='${{ secrets.IIS_USERNAME }}',Password='${{ secrets.IIS_PASSWORD }}',AuthType='Basic'
+        msdeploy -verb:sync `
+        -source:content="publish_output" `
+        -dest:iisApp="Default Web Site/MyApp" `
+        -computerName="https://${{ secrets.IIS_SERVER }}:8172/msdeploy.axd" `
+        -username="${{ secrets.IIS_USERNAME }}" `
+        -password="${{ secrets.IIS_PASSWORD }}" `
+        -authType="Basic"
       env:
         IIS_SERVER: ${{ secrets.IIS_SERVER }}
         IIS_USERNAME: ${{ secrets.IIS_USERNAME }}
