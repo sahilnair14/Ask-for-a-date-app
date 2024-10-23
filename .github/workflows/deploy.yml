@@ -1,4 +1,4 @@
-name: Deploy to IIS Server
+name: Deploy Node.js Application to IIS
 
 on:
   push:
@@ -13,26 +13,32 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up .NET Core
-      uses: actions/setup-dotnet@v3
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
       with:
-        dotnet-version: '7.x'  # Update to your required version
+        node-version: '18'  # Specify your required Node.js version
+
+    - name: Install dependencies
+      run: npm install
 
     - name: Build the project
-      run: dotnet build --configuration Release
+      run: npm run build  # Adjust this if you have a specific build step
 
-    - name: Publish the project
-      run: dotnet publish -c Release -o ./publish_output
+    - name: Archive application
+      run: |
+        New-Item -ItemType Directory -Path ./deploy
+        Copy-Item -Path ./* -Exclude ./node_modules,./.git,./deploy,./.github -Destination ./deploy -Recurse
+        Compress-Archive -Path ./deploy/* -DestinationPath ./deploy.zip
 
     - name: Install Web Deploy
       run: |
-        choco install webdeploy
+        choco install webdeploy -y
         webpicmd /install /products:WDeployAdmin /AcceptEula
 
     - name: Deploy to IIS
       run: |
         $env:PATH = "$env:PATH;C:\Program Files\IIS\Microsoft Web Deploy V3\"
-        msdeploy -verb:sync -source:iisApp='$(System.DefaultWorkingDirectory)\publish_output' -dest:iisApp='Default Web Site/MyApp',ComputerName='https://$env:IIS_SERVER:8172/msdeploy.axd',UserName='$env:IIS_USERNAME',Password='$env:IIS_PASSWORD',AuthType='Basic'
+        msdeploy -verb:sync -source:package='./deploy.zip' -dest:iisApp='Default Web Site/MyApp',ComputerName='https://$env:IIS_SERVER:8172/msdeploy.axd',UserName='$env:IIS_USERNAME',Password='$env:IIS_PASSWORD',AuthType='Basic'
       env:
         IIS_SERVER: ${{ secrets.IIS_SERVER }}
         IIS_USERNAME: ${{ secrets.IIS_USERNAME }}
@@ -40,4 +46,4 @@ jobs:
 
     - name: Verify Deployment
       run: |
-        Write-Host "Application deployed successfully!"
+        Write-Host "Node.js application deployed successfully!"
