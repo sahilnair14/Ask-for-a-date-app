@@ -39,9 +39,9 @@ jobs:
         -source:dirPath="$publishDir" `
         -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://$env:IIS_SERVER:8172/msdeploy.axd,UserName=$env:IIS_USERNAME,Password=$env:IIS_PASSWORD,AuthType=Basic"
       env:
-        IIS_SERVER: ${{ secrets.DEMOAPPSECRET }}
-        IIS_USERNAME: ${{ secrets.DEMOAPPSECRET }}
-        IIS_PASSWORD: ${{ secrets.DEMOAPPSECRET }}
+        IIS_SERVER: ${{ DEMOAPPSECRET }}
+        IIS_USERNAME: ${{ DEMOAPPSECRET }}
+        IIS_PASSWORD: ${{ DEMOAPPSECRET }}
 
     - name: Verify Deployment
       run: |
