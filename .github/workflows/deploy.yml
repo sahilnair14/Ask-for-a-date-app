@@ -15,11 +15,12 @@ jobs:
 
     - name: Set up environment
       run: |
-        mkdir publish_output
-        copy finally.html publish_output\
-        copy style.css publish_output\
-        copy yes.html publish_output\
-        copy nextpage.html publish_output\
+        $publishDir = (Resolve-Path ./publish_output).Path
+        mkdir $publishDir
+        copy finally.html $publishDir
+        copy style.css $publishDir
+        copy yes.html $publishDir
+        copy nextpage.html $publishDir
 
     - name: Install Web Deploy
       run: |
@@ -28,8 +29,9 @@ jobs:
     - name: Deploy to IIS
       run: |
         $env:PATH = "$env:PATH;C:\Program Files\IIS\Microsoft Web Deploy V3\"
+        $publishDir = (Resolve-Path ./publish_output).Path
         msdeploy.exe -verb:sync `
-        -source:dirPath="publish_output" `
+        -source:dirPath="$publishDir" `
         -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://${{ secrets.IIS_SERVER }}:8172/msdeploy.axd,UserName=${{ secrets.IIS_USERNAME }},Password=${{ secrets.IIS_PASSWORD }},AuthType=Basic"
       env:
         IIS_SERVER: ${{ secrets.IIS_SERVER }}
