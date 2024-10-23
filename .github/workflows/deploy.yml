@@ -15,8 +15,10 @@ jobs:
 
     - name: Set up environment
       run: |
-        $publishDir = (Resolve-Path ./publish_output).Path
-        mkdir $publishDir
+        $publishDir = "$(pwd)\publish_output"
+        if (-Not (Test-Path $publishDir)) {
+          New-Item -ItemType Directory -Path $publishDir
+        }
         copy finally.html $publishDir
         copy style.css $publishDir
         copy yes.html $publishDir
@@ -29,7 +31,7 @@ jobs:
     - name: Deploy to IIS
       run: |
         $env:PATH = "$env:PATH;C:\Program Files\IIS\Microsoft Web Deploy V3\"
-        $publishDir = (Resolve-Path ./publish_output).Path
+        $publishDir = "$(pwd)\publish_output"
         msdeploy.exe -verb:sync `
         -source:dirPath="$publishDir" `
         -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://${{ secrets.IIS_SERVER }}:8172/msdeploy.axd,UserName=${{ secrets.IIS_USERNAME }},Password=${{ secrets.IIS_PASSWORD }},AuthType=Basic"
