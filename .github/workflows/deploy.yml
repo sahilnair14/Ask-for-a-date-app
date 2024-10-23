@@ -28,20 +28,23 @@ jobs:
       run: |
         choco install webdeploy -y
 
+    - name: Debugging Environment Variables
+      run: |
+        Write-Host "IIS_SERVER: $env:IIS_SERVER"
+        Write-Host "IIS_USERNAME: $env:IIS_USERNAME"
+        Write-Host "IIS_PASSWORD: $env:IIS_PASSWORD"
+
     - name: Deploy to IIS
       run: |
         $env:PATH = "$env:PATH;C:\Program Files\IIS\Microsoft Web Deploy V3\"
         $publishDir = "$(pwd)\publish_output"
-        if (-Not $env:IIS_SERVER) {
-          throw "IIS_SERVER secret is not set or is empty. Please check your GitHub secrets."
-        }
         msdeploy.exe -verb:sync `
         -source:dirPath="$publishDir" `
         -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://$env:IIS_SERVER:8172/msdeploy.axd,UserName=$env:IIS_USERNAME,Password=$env:IIS_PASSWORD,AuthType=Basic"
       env:
-        IIS_SERVER: ${{ DEMOAPPSECRET.IIS_SERVER }}
-        IIS_USERNAME: ${{ DEMOAPPSECRET.IIS_USERNAME }}
-        IIS_PASSWORD: ${{ DEMOAPPSECRET.IIS_PASSWORD }}
+        IIS_SERVER: ${{ secrets.IIS_SERVER }}
+        IIS_USERNAME: ${{ secrets.IIS_USERNAME }}
+        IIS_PASSWORD: ${{ secrets.IIS_PASSWORD }}
 
     - name: Verify Deployment
       run: |
