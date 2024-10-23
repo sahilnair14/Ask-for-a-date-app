@@ -1,0 +1,43 @@
+name: Deploy to IIS Server
+
+on:
+  push:
+    branches:
+      - main  # Triggers deployment on push to the main branch
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.x'  # Update to your required version
+
+    - name: Build the project
+      run: dotnet build --configuration Release
+
+    - name: Publish the project
+      run: dotnet publish -c Release -o ./publish_output
+
+    - name: Install Web Deploy
+      run: |
+        choco install webdeploy
+        webpicmd /install /products:WDeployAdmin /AcceptEula
+
+    - name: Deploy to IIS
+      run: |
+        $env:PATH = "$env:PATH;C:\Program Files\IIS\Microsoft Web Deploy V3\"
+        msdeploy -verb:sync -source:iisApp='$(System.DefaultWorkingDirectory)\publish_output' -dest:iisApp='Default Web Site/MyApp',ComputerName='https://$env:IIS_SERVER:8172/msdeploy.axd',UserName='$env:IIS_USERNAME',Password='$env:IIS_PASSWORD',AuthType='Basic'
+      env:
+        IIS_SERVER: ${{ secrets.IIS_SERVER }}
+        IIS_USERNAME: ${{ secrets.IIS_USERNAME }}
+        IIS_PASSWORD: ${{ secrets.IIS_PASSWORD }}
+
+    - name: Verify Deployment
+      run: |
+        Write-Host "Application deployed successfully!"
