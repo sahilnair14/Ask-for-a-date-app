@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: windows-latest
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -28,9 +28,9 @@ jobs:
     - name: Deploy to IIS
       run: |
         $env:PATH = "$env:PATH;C:\Program Files\IIS\Microsoft Web Deploy V3\"
-        msdeploy -verb:sync `
+        msdeploy.exe -verb:sync `
         -source:content="publish_output" `
-        -dest:iisApp="Default Web Site/MyApp" `
+        -dest:iisApp="Default%20Web%20Site/MyApp" `
         -computerName="https://${{ secrets.IIS_SERVER }}:8172/msdeploy.axd" `
         -username="${{ secrets.IIS_USERNAME }}" `
         -password="${{ secrets.IIS_PASSWORD }}" `
