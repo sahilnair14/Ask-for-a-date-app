@@ -32,9 +32,12 @@ jobs:
       run: |
         $env:PATH = "$env:PATH;C:\Program Files\IIS\Microsoft Web Deploy V3\"
         $publishDir = "$(pwd)\publish_output"
+        if (-Not $env:IIS_SERVER) {
+          throw "IIS_SERVER secret is not set or is empty. Please check your GitHub secrets."
+        }
         msdeploy.exe -verb:sync `
         -source:dirPath="$publishDir" `
-        -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://${{ secrets.IIS_SERVER }}:8172/msdeploy.axd,UserName=${{ secrets.IIS_USERNAME }},Password=${{ secrets.IIS_PASSWORD }},AuthType=Basic"
+        -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://$env:IIS_SERVER:8172/msdeploy.axd,UserName=$env:IIS_USERNAME,Password=$env:IIS_PASSWORD,AuthType=Basic"
       env:
         IIS_SERVER: ${{ secrets.IIS_SERVER }}
         IIS_USERNAME: ${{ secrets.IIS_USERNAME }}
