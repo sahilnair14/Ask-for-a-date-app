@@ -42,16 +42,16 @@ jobs:
         # Add Web Deploy to the PATH
         $env:PATH += ";C:\Program Files\IIS\Microsoft Web Deploy V3\"
     
-        # Define the publish directory
+        # Define the publish directory (ensuring it's in C drive)
         $publishDir = "C:\publish_output"
 
         # Debug the IIS Server address to check if it's correctly retrieved
-        Write-Host "Deploying to server: "secrets.IIS_SERVER"
+        Write-Host "Deploying to server: $env:IIS_SERVER"
 
         # Run msdeploy command using variables passed through env
         & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" -verb:sync `
           -source:dirPath="$publishDir" `
-          -dest:iisApp="Default%20Web%20Site/msdeploy,ComputerName=https://secrets.IIS_SERVER:8172/msdeploy.exe,UserName=secrets.IIS_USERNAME,Password=secrets.IIS_PASSWORD,AuthType=Basic" `
+          -dest:iisApp="Default%20Web%20Site/msdeploy,ComputerName=https://$env:IIS_SERVER:8172/msdeploy,UserName=$env:IIS_USERNAME,Password=$env:IIS_PASSWORD,AuthType=Basic" `
           -allowUntrusted
       env:
         IIS_SERVER: ${{ secrets.IIS_SERVER }}
