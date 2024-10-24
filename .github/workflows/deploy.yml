@@ -40,7 +40,7 @@ jobs:
         $publishDir = "$(pwd)\publish_output"
         msdeploy.exe -verb:sync `
         -source:dirPath="$publishDir" `
-        -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://$env:FTP_SERVER:8172/msdeploy.axd,UserName=$env:FTP_USERNAME,Password=$env:FTP_PASSWORD,AuthType=Basic"
+        -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://secrets.FTP_SERVER:8172/msdeploy.axd,UserName=secrets.FTP_USERNAME,Password=secrets.FTP_PASSWORD,AuthType=Basic"
       env:
         IIS_SERVER: ${{ secrets.FTP_SERVER }}
         IIS_USERNAME: ${{ secrets.FTP_USERNAME }}
