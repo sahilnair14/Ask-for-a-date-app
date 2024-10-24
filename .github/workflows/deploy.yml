@@ -30,9 +30,9 @@ jobs:
 
     - name: Debugging Environment Variables
       run: |
-        Write-Host "FTP_SERVER: $env:FTP_SERVER"
-        Write-Host "FTP_USERNAME: $env:FTP_USERNAME"
-        Write-Host "FTP_PASSWORD: $env:FTP_PASSWORD"
+        Write-Host "FTP_SERVER: secrets.FTP_SERVER"
+        Write-Host "FTP_USERNAME: secrets.FTP_USERNAME"
+        Write-Host "FTP_PASSWORD: secrets.FTP_PASSWORD"
 
     - name: Deploy to IIS
       run: |
