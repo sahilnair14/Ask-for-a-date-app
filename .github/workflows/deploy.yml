@@ -1,37 +1,51 @@
-name: Deploy to IIS via FTP
+name: Deploy to IIS Server
 
 on:
   push:
     branches:
-      - main  # Trigger the action on push to the 'main' branch
+      - main  # Triggers deployment on push to the main branch
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-    
+    runs-on: windows-latest
+
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v3
-      
-    - name: Install Node.js dependencies
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18.x'
-        
-    - run: npm install
 
-    - name: Build the app (if needed)
-      run: npm run build
-
-    - name: Upload to IIS via FTP
-      uses: SamKirkland/FTP-Deploy-Action@4.4.0
-      with:
-        ftp-server: ${{ secrets.FTP_SERVER }}
-        ftp-username: ${{ secrets.FTP_USERNAME }}
-        ftp-password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: './'  # Directory to upload
-        server-dir: ${{ secrets.FTP_PATH }}  # Directory on the server
-
-    - name: Restart IIS App Pool
+    - name: Set up environment
       run: |
-        curl -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" ftp://${{ secrets.FTP_SERVER }}
+        $publishDir = "$(pwd)\publish_output"
+        if (-Not (Test-Path $publishDir)) {
+          New-Item -ItemType Directory -Path $publishDir
+        }
+        copy finally.html $publishDir
+        copy style.css $publishDir
+        copy yes.html $publishDir
+        copy nextpage.html $publishDir
+
+    - name: Install Web Deploy
+      run: |
+        choco install webdeploy -y
+
+    - name: Debugging Environment Variables
+      run: |
+        Write-Host "FTP_SERVER: $env:FTP_SERVER"
+        Write-Host "FTP_USERNAME: $env:FTP_USERNAME"
+        Write-Host "FTP_PASSWORD: $env:FTP_PASSWORD"
+
+    - name: Deploy to IIS
+      run: |
+        $env:PATH = "$env:PATH;C:\Program Files\IIS\Microsoft Web Deploy V3\"
+        $publishDir = "$(pwd)\publish_output"
+        msdeploy.exe -verb:sync `
+        -source:dirPath="$publishDir" `
+        -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://$env:FTP_SERVER:8172/msdeploy.axd,UserName=$env:FTP_USERNAME,Password=$env:FTP_PASSWORD,AuthType=Basic"
+      env:
+        IIS_SERVER: ${{ secrets.FTP_SERVER }}
+        IIS_USERNAME: ${{ secrets.FTP_USERNAME }}
+        IIS_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+
+    - name: Verify Deployment
+      run: |
+        Write-Host "Application deployed successfully!"
