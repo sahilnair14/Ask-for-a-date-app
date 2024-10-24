@@ -1,4 +1,4 @@
-name: Deploy to IIS Server
+name: Deploy to Azure VM
 
 on:
   push:
@@ -15,19 +15,19 @@ jobs:
 
     - name: Set up environment
       run: |
-        $publishDir = "$(pwd)\publish_output"
+        $publishDir = "C:\publish_output"  # Change the path to C drive
         if (-Not (Test-Path $publishDir)) {
           New-Item -ItemType Directory -Path $publishDir
         }
-        copy finally.html $publishDir
-        copy style.css $publishDir
-        copy yes.html $publishDir
-        copy nextpage.html $publishDir
+        # Copy files to the publish directory
+        Copy-Item finally.html $publishDir
+        Copy-Item style.css $publishDir
+        Copy-Item yes.html $publishDir
+        Copy-Item nextpage.html $publishDir
 
     - name: Install Web Deploy with MSI Log
       run: |
         choco install webdeploy --install-arguments="'/l*v c:\webdeploy_msi_install.log'" --no-progress
-
 
     - name: Uninstall Web Deploy (if present)
       run: |
@@ -37,22 +37,20 @@ jobs:
       run: |
         choco install webdeploy --no-progress
 
-
-
     - name: Debugging Environment Variables
       run: |
-        Write-Host "IIS_SERVER: secrets.IIS_SERVER"
-        Write-Host "IIS_USERNAME: secrets.IIS_USERNAME"
-        Write-Host "IIS_PASSWORD: secrets.IIS_PASSWORD"
+        Write-Host "IIS_SERVER: ${{ secrets.IIS_SERVER }}"
+        Write-Host "IIS_USERNAME: ${{ secrets.IIS_USERNAME }}"
+        Write-Host "IIS_PASSWORD: ${{ secrets.IIS_PASSWORD }}"
 
-    - name: Deploy to IIS
+    - name: Deploy to Azure VM
       run: |
         $env:PATH += ";C:\Program Files\IIS\Microsoft Web Deploy V3\"
-        $publishDir = "$(pwd)\publish_output"
-         `
-         msdeploy.exe.config -verb:sync
-        `
-        -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://secrets.IIS_SERVER:8172/msdeploy,UserName=secrets.IIS_USERNAME,Password=secrets.IIS_PASSWORD,AuthType=Basic"
+        $publishDir = "C:\publish_output"  # Ensure the path points to C drive
+        & "msdeploy.exe" -verb:sync `
+          -source:dirPath="$publishDir" `
+          -dest:auto,computerName="https://${{ secrets.IIS_SERVER }}:8172/msdeploy",username="${{ secrets.IIS_USERNAME }}",password="${{ secrets.IIS_PASSWORD }}",authType="Basic" `
+          -allowUntrusted
       env:
         IIS_SERVER: ${{ secrets.IIS_SERVER }}
         IIS_USERNAME: ${{ secrets.IIS_USERNAME }}
