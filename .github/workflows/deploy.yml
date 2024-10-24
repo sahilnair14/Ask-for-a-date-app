@@ -38,26 +38,25 @@ jobs:
         choco install webdeploy --no-progress
 
     - name: Deploy to Azure VM
-  run: |
-    # Add Web Deploy to the PATH
-    $env:PATH += ";C:\Program Files\IIS\Microsoft Web Deploy V3\"
-    
-    # Define the publish directory
-    $publishDir = "C:\publish_output"
+      run: |
+        # Add Web Deploy to the PATH
+        $env:PATH += ";C:\Program Files\IIS\Microsoft Web Deploy V3\"
+        
+        # Define the publish directory
+        $publishDir = "C:\publish_output"
 
-    # Debug the IIS Server address to check if it's correctly retrieved
-    Write-Host "Deploying to server: 20.5.19.9"
+        # Debug the IIS Server address to check if it's correctly retrieved
+        Write-Host "Deploying to server: 20.5.19.9"
 
-    # Run msdeploy command using variables passed through env
-    & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" -verb:sync `
-      -source:dirPath="$publishDir" `
-      -dest:iisApp="Default Web Site/MyApp,ComputerName=https://20.5.19.9:8172/msdeploy.axd,UserName=$env:IIS_USERNAME,Password=$env:IIS_PASSWORD,AuthType=Basic" `
-      -allowUntrusted
-  env:
-    IIS_SERVER: 20.5.19.9
-    IIS_USERNAME: sahil
-    IIS_PASSWORD: Sahil1234567
-
+        # Run msdeploy command using variables passed through env
+        & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" -verb:sync `
+          -source:dirPath="$publishDir" `
+          -dest:iisApp="Default Web Site/MyApp,ComputerName=https://20.5.19.9:8172/msdeploy.axd,UserName=$env:IIS_USERNAME,Password=$env:IIS_PASSWORD,AuthType=Basic" `
+          -allowUntrusted
+      env:
+        IIS_SERVER: 20.5.19.9
+        IIS_USERNAME: sahil
+        IIS_PASSWORD: Sahil1234567
 
     - name: Verify Deployment
       run: |
