@@ -37,26 +37,21 @@ jobs:
       run: |
         choco install webdeploy --no-progress
 
-    - name: Debugging Environment Variables
-      run: |
-        Write-Host "IIS_SERVER: ${{ secrets.IIS_SERVER }}"
-        Write-Host "IIS_USERNAME: ${{ secrets.IIS_USERNAME }}"
-        Write-Host "IIS_PASSWORD: ${{ secrets.IIS_PASSWORD }}"
-
     - name: Deploy to Azure VM
       run: |
+        # Add Web Deploy to the PATH
         $env:PATH += ";C:\Program Files\IIS\Microsoft Web Deploy V3\"
+    
+        # Define the publish directory
         $publishDir = "C:\publish_output"
 
-        # Store secrets in PowerShell variables
-        $iisServer = "${{ secrets.IIS_SERVER }}"
-        $iisUsername = "${{ secrets.IIS_USERNAME }}"
-        $iisPassword = "${{ secrets.IIS_PASSWORD }}"
+        # Debug the IIS Server address to check if it's correctly retrieved
+        Write-Host "Deploying to server: $env:IIS_SERVER"
 
-        # Run msdeploy command using variables
+        # Run msdeploy command using variables passed through env
         & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" -verb:sync `
           -source:dirPath="$publishDir" `
-          -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://$iisServer:8172/msdeploy.exe,UserName=$iisUsername,Password=$iisPassword,AuthType=Basic" `
+          -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://$env:IIS_SERVER:8172/msdeploy,UserName=$env:IIS_USERNAME,Password=$env:IIS_PASSWORD,AuthType=Basic" `
           -allowUntrusted
       env:
         IIS_SERVER: ${{ secrets.IIS_SERVER }}
