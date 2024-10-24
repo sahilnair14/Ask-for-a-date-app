@@ -44,17 +44,25 @@ jobs:
         Write-Host "IIS_PASSWORD: ${{ secrets.IIS_PASSWORD }}"
 
     - name: Deploy to Azure VM
-      run: |
-        $env:PATH += ";C:\Program Files\IIS\Microsoft Web Deploy V3\"
-        $publishDir = "C:\publish_output"  # Ensure the path points to C drive
-        & "msdeploy.exe" -verb:sync `
-          -source:dirPath="$publishDir" `
-          -dest:auto,computerName="https://${{ secrets.IIS_SERVER }}:8172/msdeploy.exe",username="${{ secrets.IIS_USERNAME }}",password="${{ secrets.IIS_PASSWORD }}",authType="Basic" `
-          -allowUntrusted
-      env:
-        IIS_SERVER: ${{ secrets.IIS_SERVER }}
-        IIS_USERNAME: ${{ secrets.IIS_USERNAME }}
-        IIS_PASSWORD: ${{ secrets.IIS_PASSWORD }}
+  run: |
+    $env:PATH += ";C:\Program Files\IIS\Microsoft Web Deploy V3\"
+    $publishDir = "C:\publish_output"
+
+    # Store secrets in PowerShell variables
+    $iisServer = "${{ secrets.IIS_SERVER }}"
+    $iisUsername = "${{ secrets.IIS_USERNAME }}"
+    $iisPassword = "${{ secrets.IIS_PASSWORD }}"
+
+    # Run msdeploy command using variables
+    & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" -verb:sync `
+      -source:dirPath="$publishDir" `
+      -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://$iisServer:8172/msdeploy,UserName=$iisUsername,Password=$iisPassword,AuthType=Basic" `
+      -allowUntrusted
+  env:
+    IIS_SERVER: ${{ secrets.IIS_SERVER }}
+    IIS_USERNAME: ${{ secrets.IIS_USERNAME }}
+    IIS_PASSWORD: ${{ secrets.IIS_PASSWORD }}
+
 
     - name: Verify Deployment
       run: |
