@@ -24,13 +24,19 @@ jobs:
         copy yes.html $publishDir
         copy nextpage.html $publishDir
 
-    - name: Install Web Deploy
+    - name: Install Web Deploy with MSI Log
       run: |
-        choco install webdeploy -y
+        choco install webdeploy --install-arguments="'/l*v c:\webdeploy_msi_install.log'" --no-progress
 
-    - name: Install Web Deploy
+
+    - name: Uninstall Web Deploy (if present)
+      run: |
+        choco uninstall webdeploy --yes --no-progress
+
+    - name: Reinstall Web Deploy
       run: |
         choco install webdeploy --no-progress
+
 
 
     - name: Debugging Environment Variables
@@ -41,7 +47,7 @@ jobs:
 
     - name: Deploy to IIS
       run: |
-        $env:PATH = "$env:PATH;C:\Program Files\iisnode\www\configuration"
+        $env:PATH += ";C:\Program Files\IIS\Microsoft Web Deploy V3\"
         $publishDir = "$(pwd)\publish_output"
          `
          msdeploy.exe -verb:sync
