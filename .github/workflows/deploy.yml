@@ -36,7 +36,7 @@ jobs:
 
     - name: Deploy to IIS
       run: |
-        $env:PATH = "$env:PATH;C:\Program Files\IIS\Microsoft Web Deploy V3\"
+        $env:PATH = "$env:PATH;C:\Program Files\iisnode\www\configuration"
         $publishDir = "$(pwd)\publish_output"
          `
          msdeploy.exe -verb:sync
