@@ -28,6 +28,11 @@ jobs:
       run: |
         choco install webdeploy -y
 
+    - name: Install Web Deploy
+      run: |
+        choco install webdeploy --no-progress
+
+
     - name: Debugging Environment Variables
       run: |
         Write-Host "IIS_SERVER: secrets.IIS_SERVER"
