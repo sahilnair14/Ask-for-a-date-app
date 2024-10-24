@@ -49,7 +49,7 @@ jobs:
         $publishDir = "C:\publish_output"  # Ensure the path points to C drive
         & "msdeploy.exe" -verb:sync `
           -source:dirPath="$publishDir" `
-          -dest:auto,computerName="https://${{ secrets.IIS_SERVER }}:8172/msdeploy",username="${{ secrets.IIS_USERNAME }}",password="${{ secrets.IIS_PASSWORD }}",authType="Basic" `
+          -dest:auto,computerName="https://${{ secrets.IIS_SERVER }}:8172/msdeploy.exe",username="${{ secrets.IIS_USERNAME }}",password="${{ secrets.IIS_PASSWORD }}",authType="Basic" `
           -allowUntrusted
       env:
         IIS_SERVER: ${{ secrets.IIS_SERVER }}
