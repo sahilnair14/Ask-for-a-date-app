@@ -30,9 +30,9 @@ jobs:
 
     - name: Debugging Environment Variables
       run: |
-        Write-Host "FTP_SERVER: secrets.FTP_SERVER"
-        Write-Host "FTP_USERNAME: secrets.FTP_USERNAME"
-        Write-Host "FTP_PASSWORD: secrets.FTP_PASSWORD"
+        Write-Host "IIS_SERVER: secrets.IIS_SERVER"
+        Write-Host "IIS_USERNAME: secrets.IIS_USERNAME"
+        Write-Host "IIS_PASSWORD: secrets.IIS_PASSWORD"
 
     - name: Deploy to IIS
       run: |
@@ -40,11 +40,11 @@ jobs:
         $publishDir = "$(pwd)\publish_output"
         msdeploy.exe -verb:sync `
         -source:dirPath="$publishDir" `
-        -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://secrets.FTP_SERVER:8172/msdeploy.axd,UserName=secrets.FTP_USERNAME,Password=secrets.FTP_PASSWORD,AuthType=Basic"
+        -dest:iisApp="Default%20Web%20Site/MyApp,ComputerName=https://secrets.IIS_SERVER:8172/msdeploy.axd,UserName=secrets.IIS_USERNAME,Password=secrets.IIS_PASSWORD,AuthType=Basic"
       env:
-        IIS_SERVER: ${{ secrets.FTP_SERVER }}
-        IIS_USERNAME: ${{ secrets.FTP_USERNAME }}
-        IIS_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        IIS_SERVER: ${{ secrets.IIS_SERVER }}
+        IIS_USERNAME: ${{ secrets.IIS_USERNAME }}
+        IIS_PASSWORD: ${{ secrets.IIS_PASSWORD }}
 
     - name: Verify Deployment
       run: |
