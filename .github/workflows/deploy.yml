@@ -46,15 +46,15 @@ jobs:
         $publishDir = "C:\publish_output"
 
         # Debug the IIS Server address to check if it's correctly retrieved
-        Write-Host "Deploying to server: 20.5.19.9"
+        Write-Host "Deploying to server: 40.82.198.47"
 
         # Run msdeploy command using variables passed through env
         & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" -verb:sync `
           -source:dirPath="$publishDir" `
-          -dest:iisApp="Default Web Site/MyApp",ComputerName="https://$env:IIS_SERVER:8172/msdeploy.axd",UserName="$env:IIS_USERNAME",Password="$env:IIS_PASSWORD",AuthType="Basic" `
+          -dest:iisApp="Default Web Site/MyApp",ComputerName="https://40.82.198.47:8172/msdeploy.axd",UserName="sahil",Password="Sahil1234567",AuthType="Basic" `
           -allowUntrusted
       env:
-        IIS_SERVER: 20.5.19.9
+        IIS_SERVER: 40.82.198.47
         IIS_USERNAME: sahil
         IIS_PASSWORD: Sahil1234567
 
