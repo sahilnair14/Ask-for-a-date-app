@@ -49,14 +49,21 @@ jobs:
         Write-Host "Deploying to server:40.82.198.47"
 
         # Execute the msdeploy command
-        & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" -verb:sync `
-          -source:dirPath="$publishDir" `
-          -dest:iisApp='DemoApp/MyApp' `
-          -ComputerName="http://40.82.198.47:8172/msdeploy.axd" `
-          -UserName="sahil" `
-          -Password="Sahil1234567" `
-          -AuthType="Basic" `
+        $msdeployCommand = @"
+          & 'C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe' -verb:sync `
+          -source:dirPath='$publishDir' `
+          -dest:iisApp='DemoApp/MyApp',ComputerName='http://40.82.198.47:8172/msdeploy.axd' `
+          -UserName='sahil' `
+          -Password='Sahil1234567' `
+          -AuthType='Basic' `
           -allowUntrusted
+"@
+
+        # Write the command to the console for debugging
+        Write-Host "Executing command: $msdeployCommand"
+
+        # Execute the constructed command
+        Invoke-Expression $msdeployCommand
       env:
         IIS_SERVER: 40.82.198.47
         IIS_USERNAME: sahil
