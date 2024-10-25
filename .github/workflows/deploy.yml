@@ -15,7 +15,7 @@ jobs:
 
     - name: Set up environment
       run: |
-        $publishDir = "C:\publish_output"  # Change the path to C drive
+        $publishDir = "C:\publish_output"  # Ensure the path is on the C drive
         if (-Not (Test-Path $publishDir)) {
           New-Item -ItemType Directory -Path $publishDir
         }
@@ -46,12 +46,13 @@ jobs:
         $publishDir = "C:\publish_output"
 
         # Debug the IIS Server address to check if it's correctly retrieved
-        Write-Host "Deploying to server: 42.82.198.47"
+        Write-Host "Deploying to server: $IIS_SERVER"
 
         # Execute the msdeploy command
         & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" -verb:sync `
           -source:dirPath="$publishDir" `
-          -dest:iisApp="DemoApp",ComputerName="http://40.82.198.47:8172/msdeploy.axd" `
+          -dest:iisApp="DemoApp" `
+          -ComputerName="http://$IIS_SERVER:8172/msdeploy.axd" `
           -UserName="$IIS_USERNAME" `
           -Password="$IIS_PASSWORD" `
           -AuthType="Basic" `
@@ -64,3 +65,4 @@ jobs:
     - name: Verify Deployment
       run: |
         Write-Host "Application deployed successfully!"
+
