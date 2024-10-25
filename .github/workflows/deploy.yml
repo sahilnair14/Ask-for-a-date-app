@@ -51,7 +51,7 @@ jobs:
         # Run msdeploy command using variables passed through env
         & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" -verb:sync `
           -source:dirPath="$publishDir" `
-          -dest:iisApp="Default Web Site/MyApp",ComputerName="https://40.82.198.47:8172/msdeploy.axd",UserName="sahil",Password="Sahil1234567",AuthType="Basic" `
+          -dest:iisApp="Default%20Web%20Site/MyApp",ComputerName="https://40.82.198.47:8172/msdeploy.axd",UserName="sahil",Password="Sahil1234567",AuthType="Basic" `
           -allowUntrusted
       env:
         IIS_SERVER: 40.82.198.47
