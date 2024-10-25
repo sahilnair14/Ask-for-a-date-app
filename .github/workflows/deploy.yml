@@ -52,8 +52,7 @@ jobs:
         & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
           -verb:sync `
           -source:dirPath="$publishDir" `
-          -dest:iisApp="DemoApp" `
-          -ComputerName="http://$IIS_SERVER:8172/msdeploy.axd" `
+          -dest:iisApp="DemoApp",ComputerName="http://$IIS_SERVER:8172/msdeploy.axd" `
           -UserName="$IIS_USERNAME" `
           -Password="$IIS_PASSWORD" `
           -AuthType="Basic" `
