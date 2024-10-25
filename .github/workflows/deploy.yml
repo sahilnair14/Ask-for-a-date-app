@@ -49,9 +49,7 @@ jobs:
         Write-Host "Deploying to server: 40.82.198.47"
 
         # Run msdeploy command using variables passed through env
-        & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" -verb:sync `
-          -source:dirPath="$publishDir" `
-          -dest:iisApp="Default Web Site/MyApp" -ComputerName="http://40.82.198.47:8172/msdeploy.axd" -UserName="sahil" -Password="Sahil1234567" -AuthType="Basic" -allowUntrusted `
+        & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" -verb:sync -source:dirPath="$publishDir" -dest:iisApp="Default Web Site/MyApp" -ComputerName="http://40.82.198.47:8172/msdeploy.axd" -UserName="sahil" -Password="Sahil1234567" -AuthType="Basic" -allowUntrusted
           
       env:
         IIS_SERVER: 40.82.198.47
