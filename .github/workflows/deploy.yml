@@ -48,8 +48,9 @@ jobs:
         # Debug the IIS Server address to check if it's correctly retrieved
         Write-Host "Deploying to server: $IIS_SERVER"
 
-        # Execute the msdeploy command
-        & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" -verb:sync `
+        # Execute the msdeploy command directly
+        & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
+          -verb:sync `
           -source:dirPath="$publishDir" `
           -dest:iisApp="DemoApp" `
           -ComputerName="http://$IIS_SERVER:8172/msdeploy.axd" `
@@ -65,4 +66,3 @@ jobs:
     - name: Verify Deployment
       run: |
         Write-Host "Application deployed successfully!"
-
